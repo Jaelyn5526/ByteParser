@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
+import com.google.gson.Gson;
+
 public class MainActivity extends AppCompatActivity {
 
     @Override
@@ -19,12 +21,11 @@ public class MainActivity extends AppCompatActivity {
         final float aFloat = 1.9f;
         final double aDouble = 9.4;
         final String aString = "Hello Android";
-        byte[] bytes = aString.getBytes();
         findViewById(R.id.text).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 DemoBean dataBean = new DemoBean();
-                dataBean.aByte = abyte;
+                /*dataBean.aByte = abyte;
                 dataBean.aChar = aChar;
                 dataBean.aInt = aInt;
                 dataBean.aShort = aShort;
@@ -33,6 +34,19 @@ public class MainActivity extends AppCompatActivity {
                 dataBean.aDouble = aDouble;
                 dataBean.aString = aString;
                 dataBean.aBoolean = true;
+                dataBean.bBoolean = false;
+                dataBean.bByte = 9;
+                dataBean.bShort = 8;
+                dataBean.bInt = 7;
+                dataBean.bLong = 6l;
+                dataBean.bFloat = 5.5f;
+                dataBean.bDouble = 4d;*/
+                dataBean.integers.add(1);
+                dataBean.integers.add(2);
+                dataBean.integers.add(3);
+                dataBean.integers.add(4);
+                dataBean.integers.add(5);
+                dataBean.integers.add(6);
 
                 byte[] data = JByteUtil.objectToByte(dataBean);
 
@@ -46,5 +60,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
     }
 }

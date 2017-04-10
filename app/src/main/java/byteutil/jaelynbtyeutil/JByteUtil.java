@@ -1,6 +1,7 @@
 package byteutil.jaelynbtyeutil;
 
 import android.util.Log;
+import android.widget.TextView;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
@@ -21,23 +22,27 @@ public class JByteUtil {
 
     public static Object parserByte(Class<?> cls, byte[] data) {
         starIndex = 0;
-        num = 0;
-        ArrayList<Field> fields = extractFields(cls);
+        List<Field> fields = extractFields(cls);
         return parserByte(cls, data, fields);
     }
 
     /**
      * 提取需要解析的成员变量
      */
-    private static ArrayList<Field> extractFields(Class<?> cls) {
+    private static List<Field> extractFields(Class<?> cls) {
         Field[] fields = cls.getDeclaredFields();
-        ArrayList<Field> arrayFields = new ArrayList<>();
-        for (int i = 0; i < fields.length; i++) {
-            if (fields[i].isAnnotationPresent(JByte.class)) {
-                arrayFields.add(fields[i]);
+        List<Field> arrayFields = new ArrayList<>();
+        if (List.class.isAssignableFrom(cls) | cls.isArray()){
+            arrayFields = Arrays.asList(fields);
+        }else {
+            for (int i = 0; i < fields.length; i++) {
+                if (fields[i].isAnnotationPresent(JByte.class)) {
+                    arrayFields.add(fields[i]);
+                }
+                Log.d("field", fields[i].getName() + "---" + fields[i].getType());
             }
-            Log.d("field", fields[i].getName() + "---" + fields[i].getType());
         }
+
         Log.d("field -----", "------------");
         Collections.sort(arrayFields, new Comparator<Field>() {
             @Override
@@ -60,7 +65,7 @@ public class JByteUtil {
         return arrayFields;
     }
 
-    private static Object parserByte(Class<?> cls, byte[] data, ArrayList<Field> fields) {
+    private static Object parserByte(Class<?> cls, byte[] data, List<Field> fields) {
 
         try {
             Object obj = Class.forName(cls.getName()).newInstance();
@@ -90,51 +95,39 @@ public class JByteUtil {
      */
     private static void getPrimitiveLenght(Object obj, Field field, byte[] data) {
         try {
-
             if (field.getType() == byte.class) {
-                num = 1;
                 field.setByte(obj, data[starIndex]);
                 starIndex += 1;
             } else if (field.getType() == char.class) {
                 byte[] bytes = Arrays.copyOfRange(data, starIndex, starIndex + 2);
                 starIndex += 2;
-                num = 2;
                 field.setChar(obj, ByteUtil.getChar(bytes));
             } else if (field.getType() == short.class) {
                 byte[] bytes = Arrays.copyOfRange(data, starIndex, starIndex + 2);
                 starIndex += 2;
-                num = 2;
                 field.setShort(obj, ByteUtil.getShort(bytes));
             } else if (field.getType() == int.class) {
                 byte[] bytes = Arrays.copyOfRange(data, starIndex, starIndex + 4);
                 starIndex += 4;
-                num = 4;
                 field.setInt(obj, ByteUtil.getInt(bytes));
             } else if (field.getType() == long.class) {
                 byte[] bytes = Arrays.copyOfRange(data, starIndex, starIndex + 8);
                 starIndex += 8;
-                num = 8;
                 field.setLong(obj, ByteUtil.getLong(bytes));
             } else if (field.getType() == float.class) {
                 byte[] bytes = Arrays.copyOfRange(data, starIndex, starIndex + 4);
                 starIndex += 4;
-                num = 4;
                 field.setFloat(obj, ByteUtil.getFloat(bytes));
             } else if (field.getType() == double.class) {
                 byte[] bytes = Arrays.copyOfRange(data, starIndex, starIndex + 8);
                 starIndex += 8;
-                num = 8;
                 field.setDouble(obj, ByteUtil.getDouble(bytes));
-            } else if (field.getType() == String.class) {
-                int lenght = field.getAnnotation(JByte.class).lenght();
-                byte[] bytes = new byte[lenght];
-                System.arraycopy(data, starIndex, bytes, 0, lenght);
-                String string = new String(bytes, "UTF-8");
-                field.set(obj, string);
+            }  else if (field.getType() == boolean.class){
+                boolean bln = data[starIndex] == 1;
+                field.setBoolean(obj, bln);
+                starIndex += 1;
             }
         } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
     }
@@ -152,7 +145,7 @@ public class JByteUtil {
                 int stringSize = 0;
                 int lenght = field.getAnnotation(JByte.class).lenght();
                 for (int i = starIndex; i < starIndex + lenght; i++) {
-                    if (data[i] == 0){
+                    if (data[i] == 0) {
                         stringSize = i - starIndex;
                         break;
                     }
@@ -162,7 +155,12 @@ public class JByteUtil {
                 String string = new String(bytes, "UTF-8");
                 field.set(obj, string);
                 starIndex += lenght;
-                num = lenght;
+            }else if (field.getType() == Boolean.class){
+                boolean bln = data[starIndex] == 1;
+                field.set(obj, bln);
+                starIndex += 1;
+            }else if (Number.class.isAssignableFrom(field.getType())){
+                getNumberLenght(obj, field, data);
             }
         } catch (IllegalAccessException e) {
             e.printStackTrace();
@@ -171,13 +169,41 @@ public class JByteUtil {
         }
     }
 
+    private static void getNumberLenght(Object obj, Field field, byte[] data)
+            throws IllegalAccessException {
+        if (field.getType() == Byte.class) {
+            field.set(obj, data[starIndex]);
+            starIndex += 1;
+        } else if (field.getType() == Short.class) {
+            byte[] bytes = Arrays.copyOfRange(data, starIndex, starIndex + 2);
+            field.set(obj, ByteUtil.getShort(bytes));
+            starIndex += 2;
+        } else if (field.getType() == Integer.class) {
+            byte[] bytes = Arrays.copyOfRange(data, starIndex, starIndex + 4);
+            field.set(obj, ByteUtil.getInt(bytes));
+            starIndex += 4;
+        } else if (field.getType() == Long.class) {
+            byte[] bytes = Arrays.copyOfRange(data, starIndex, starIndex + 8);
+            field.set(obj, ByteUtil.getLong(bytes));
+            starIndex += 8;
+        } else if (field.getType() == Float.class) {
+            byte[] bytes = Arrays.copyOfRange(data, starIndex, starIndex + 4);
+            field.set(obj, ByteUtil.getFloat(bytes));
+            starIndex += 4;
+        } else if (field.getType() == Double.class) {
+            byte[] bytes = Arrays.copyOfRange(data, starIndex, starIndex + 8);
+            field.set(obj, ByteUtil.getDouble(bytes));
+            starIndex += 8;
+        }
+    }
+
     public static byte[] objectToByte(Object object) {
         Class cls = object.getClass();
-        ArrayList<Field> fields = extractFields(cls);
+        List<Field> fields = extractFields(cls);
         return objectToByte(object, fields);
     }
 
-    private static byte[] objectToByte(Object obj, ArrayList<Field> fields) {
+    private static byte[] objectToByte(Object obj, List<Field> fields) {
         byte[] bytes = new byte[0];
         byte[] data = new byte[0];
         byte[] current;
@@ -187,9 +213,11 @@ public class JByteUtil {
             } else {
                 current = getUnPrimitiveByte(field, obj);
             }
-            bytes = Arrays.copyOf(data, data.length + current.length);
-            System.arraycopy(current, 0, bytes, data.length, current.length);
-            data = bytes;
+            if (current != null){
+                bytes = Arrays.copyOf(data, data.length + current.length);
+                System.arraycopy(current, 0, bytes, data.length, current.length);
+                data = bytes;
+            }
         }
         return bytes;
     }
@@ -230,19 +258,57 @@ public class JByteUtil {
 
     public static byte[] getUnPrimitiveByte(Field field, Object obj) {
         try {
-            if (field.getType() == String.class) {
+            if (field.getType() == String.class) {  //String 类型
                 byte[] data = new byte[field.getAnnotation(JByte.class).lenght()];
                 byte[] strings = ((String) field.get(obj)).getBytes();
                 System.arraycopy(strings, 0, data, 0, strings.length);
                 return data;
-            } else if (field.getType() == List.class) {
-
-            } else if (field.getType() == Arrays.class) {
-
+            } else if (Number.class.isAssignableFrom(field.getType())) {
+                return getNumberByte(field, obj);
+            } else if (field.getType() == Boolean.class) {
+                byte data = ((Boolean) field.get(obj)) ? (byte) 1 : (byte) 0;
+                return new byte[]{data};
+            } else if(List.class.isAssignableFrom(field.getType())){
+                byte[] bytes = new byte[0];
+                byte[] datas = new byte[0];
+                List<Object> objects = (List<Object>) field.get(obj);
+                for (int i = 0; i < objects.size(); i++) {
+                    byte[] current = objectToByte(objects.get(i));
+                    if (current == null){
+                        return null;
+                    }
+                    bytes = Arrays.copyOf(datas,  datas.length + current.length);
+                    System.arraycopy(current, 0, bytes, datas.length, current.length);
+                }
+                return bytes;
             }
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
+        return null;
+    }
+
+    public static byte[] getNumberByte(Field field, Object obj) throws IllegalAccessException {
+            if (field.getType() == Byte.class) {
+                Byte data = (Byte) field.get(obj);
+                return new byte[]{data};
+            } else if (field.getType() == Short.class) {
+                Short data = (Short) field.get(obj);
+                return ByteUtil.getBytes(data);
+            } else if (field.getType() == Integer.class) {
+                Integer data = (Integer) field.get(obj);
+                return ByteUtil.getBytes(data);
+            } else if (field.getType() == Long.class) {
+                Long data = (Long) field.get(obj);
+                return ByteUtil.getBytes(data);
+            } else if (field.getType() == Float.class) {
+                Float data = (Float) field.get(obj);
+                return ByteUtil.getBytes(data);
+            } else if (field.getType() == Double.class) {
+                Double data = (Double) field.get(obj);
+                return ByteUtil.getBytes(data);
+            }
+
         return null;
     }
 }
