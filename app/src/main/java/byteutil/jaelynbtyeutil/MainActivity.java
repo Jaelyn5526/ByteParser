@@ -3,6 +3,7 @@ package byteutil.jaelynbtyeutil;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -10,20 +11,40 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        byte abyte = 10;
-        char aChar = 'a';
-        short aShort = 12;
-        int aInt = 200;
-        long aLong = 900;
-        float aFloat = 1.9f;
-        double aDouble = 9.4;
+        final byte abyte = 10;
+        final char aChar = 'a';
+        final short aShort = 12;
+        final int aInt = 200;
+        final long aLong = 900;
+        final float aFloat = 1.9f;
+        final double aDouble = 9.4;
+        final String aString = "Hello Android";
+        byte[] bytes = aString.getBytes();
+        findViewById(R.id.text).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DemoBean dataBean = new DemoBean();
+                dataBean.aByte = abyte;
+                dataBean.aChar = aChar;
+                dataBean.aInt = aInt;
+                dataBean.aShort = aShort;
+                dataBean.aLong = aLong;
+                dataBean.aFloat = aFloat;
+                dataBean.aDouble = aDouble;
+                dataBean.aString = aString;
+                dataBean.aBoolean = true;
 
-        DemoBean bean =
-                (DemoBean) JByteParser.parserByte(DemoBean.class, new byte[]{1, 1, 2, 3, 13, 4, 5,4,4, 1,2,3,4,5,6,7,8, 1,2,3,4, 1,2,3,4,5,6,7,8});
-        if (bean != null){
-            Log.d("tag--", "null");
-        }else {
-            Log.d("tag---", bean.toString());
-        }
+                byte[] data = JByteUtil.objectToByte(dataBean);
+
+                DemoBean bean =
+                        (DemoBean) JByteUtil
+                                .parserByte(DemoBean.class, data);
+                if (bean == null){
+                    Log.d("tag--", "null");
+                }else {
+                    Log.d("tag---", bean.toString());
+                }
+            }
+        });
     }
 }

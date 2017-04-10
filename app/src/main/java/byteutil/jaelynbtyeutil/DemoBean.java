@@ -5,6 +5,7 @@ package byteutil.jaelynbtyeutil;
  */
 
 public class DemoBean{
+
     @JByte(index = 0)
     public byte aByte;
 
@@ -26,12 +27,17 @@ public class DemoBean{
     @JByte(index = 6)
     public double aDouble;
 
+    @JByte(index = 7 , lenght = 20)
     public String aString;
+
+    @JByte(index = 8)
+    public boolean aBoolean = true;
 
     @Override
     public String toString() {
         return "DemoBean{" +
-                "aByte=" + aByte +
+                "aBoolean=" + aBoolean +
+                ", aByte=" + aByte +
                 ", aChar=" + aChar +
                 ", aShort=" + aShort +
                 ", aInt=" + aInt +
