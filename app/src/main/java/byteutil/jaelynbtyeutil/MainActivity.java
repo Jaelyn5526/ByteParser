@@ -7,6 +7,10 @@ import android.view.View;
 
 import com.google.gson.Gson;
 
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
 
     @Override
@@ -21,11 +25,13 @@ public class MainActivity extends AppCompatActivity {
         final float aFloat = 1.9f;
         final double aDouble = 9.4;
         final String aString = "Hello Android";
+        final Boolean aBoolean = false;
+
         findViewById(R.id.text).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 DemoBean dataBean = new DemoBean();
-                /*dataBean.aByte = abyte;
+                dataBean.aByte = abyte;
                 dataBean.aChar = aChar;
                 dataBean.aInt = aInt;
                 dataBean.aShort = aShort;
@@ -40,26 +46,41 @@ public class MainActivity extends AppCompatActivity {
                 dataBean.bInt = 7;
                 dataBean.bLong = 6l;
                 dataBean.bFloat = 5.5f;
-                dataBean.bDouble = 4d;*/
+                dataBean.bDouble = 4d;
+                /*dataBean.integers.add(1);
+                dataBean.integers.add(2);
+                dataBean.integers.add(3);
+                dataBean.integers.add(4);
+                dataBean.integers.add(5);
+                dataBean.integers.add(6);*/
+
+//                byte[] data = JByteUtil.objectToByte(dataBean);
+                byte[] data = JByteArrays.getBytes(dataBean);
+                Log.d("data", ByteUtil.getStringforLog(data));
+                DemoBean bean =
+                        (DemoBean) JByteUtil
+                                .parserByte(DemoBean.class, data);
+                if (bean == null) {
+                    Log.d("tag--", "null");
+                } else {
+                    Log.d("tag---", bean.toString());
+                }
+            }
+        });
+
+        findViewById(R.id.btn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DemoListBean dataBean = new DemoListBean();
                 dataBean.integers.add(1);
                 dataBean.integers.add(2);
                 dataBean.integers.add(3);
                 dataBean.integers.add(4);
                 dataBean.integers.add(5);
                 dataBean.integers.add(6);
-
-                byte[] data = JByteUtil.objectToByte(dataBean);
-
-                DemoBean bean =
-                        (DemoBean) JByteUtil
-                                .parserByte(DemoBean.class, data);
-                if (bean == null){
-                    Log.d("tag--", "null");
-                }else {
-                    Log.d("tag---", bean.toString());
-                }
+                byte[] data = JByteArrays.getBytes(dataBean);
+                Log.d("data", ByteUtil.getStringforLog(data));
             }
         });
-
     }
 }

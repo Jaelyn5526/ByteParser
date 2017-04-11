@@ -269,16 +269,16 @@ public class JByteUtil {
                 byte data = ((Boolean) field.get(obj)) ? (byte) 1 : (byte) 0;
                 return new byte[]{data};
             } else if(List.class.isAssignableFrom(field.getType())){
+                List<Object> lists = (List<Object>) field.get(obj);
                 byte[] bytes = new byte[0];
                 byte[] datas = new byte[0];
-                List<Object> objects = (List<Object>) field.get(obj);
-                for (int i = 0; i < objects.size(); i++) {
-                    byte[] current = objectToByte(objects.get(i));
-                    if (current == null){
-                        return null;
-                    }
-                    bytes = Arrays.copyOf(datas,  datas.length + current.length);
-                    System.arraycopy(current, 0, bytes, datas.length, current.length);
+                byte[] currents = new byte[0];
+                for (int i = 0; i < lists.size(); i++) {
+                    Field[] fields = lists.get(i).getClass().getFields();
+                    List<Field> arrayField = Arrays.asList(fields);
+                    currents = objectToByte(lists.get(i), arrayField);
+                    bytes = Arrays.copyOf(datas, datas.length + currents.length);
+                    System.arraycopy(currents, 0, bytes, datas.length, currents.length);
                 }
                 return bytes;
             }

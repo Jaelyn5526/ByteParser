@@ -101,4 +101,16 @@ public class ByteUtil {
     public static String getString(byte[] bytes) {
         return getString(bytes, "UTF-8");
     }
+
+    public static String getStringforLog(byte[] bytes){
+        StringBuilder sb = new StringBuilder();
+        if (bytes == null){
+            return "null";
+        }
+        for (int i = 0; i < bytes.length; i++) {
+            sb.append(bytes[i] & 0xff);
+            sb.append(',');
+        }
+        return sb.toString();
+    }
 }

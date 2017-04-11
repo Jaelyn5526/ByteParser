@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 public class DemoBean{
 
-   /* @JByte(index = 0)
+    @JByte(index = 0)
     public byte aByte;
 
     @JByte(index = 1)
@@ -55,7 +55,28 @@ public class DemoBean{
 
     @JByte(index = 18)
     public Boolean bBoolean = true;
-*/
-   @JByte(index = 1)
-    ArrayList<Integer> integers = new ArrayList<>();
+  /* @JByte(index = 1)
+    ArrayList<Integer> integers = new ArrayList<>();*/
+
+    @Override
+    public String toString() {
+        return "DemoBean{" +
+                "aBoolean=" + aBoolean +
+                ", aByte=" + aByte +
+                ", aChar=" + aChar +
+                ", aShort=" + aShort +
+                ", aInt=" + aInt +
+                ", aLong=" + aLong +
+                ", aFloat=" + aFloat +
+                ", aDouble=" + aDouble +
+                ", aString='" + aString + '\'' +
+                ", bByte=" + bByte +
+                ", bShort=" + bShort +
+                ", bInt=" + bInt +
+                ", bLong=" + bLong +
+                ", bFloat=" + bFloat +
+                ", bDouble=" + bDouble +
+                ", bBoolean=" + bBoolean +
+                '}';
+    }
 }
