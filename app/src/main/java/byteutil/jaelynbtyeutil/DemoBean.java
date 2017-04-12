@@ -34,6 +34,7 @@ public class DemoBean{
 
     @JByte(index = 8)
     public boolean aBoolean = true;
+
     @JByte(index = 9)
     public Byte bByte;
 
@@ -47,6 +48,8 @@ public class DemoBean{
     @JByte(index = 14)
     public Long bLong;
 
+
+
     @JByte(index = 15)
     public Float bFloat;
 
@@ -54,7 +57,7 @@ public class DemoBean{
     public Double bDouble;
 
     @JByte(index = 18)
-    public Boolean bBoolean = true;
+    public Boolean bBoolean;
   /* @JByte(index = 1)
     ArrayList<Integer> integers = new ArrayList<>();*/
 

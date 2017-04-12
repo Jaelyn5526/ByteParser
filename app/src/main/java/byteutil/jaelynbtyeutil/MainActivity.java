@@ -5,12 +5,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
-import com.google.gson.Gson;
-
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
-
 public class MainActivity extends AppCompatActivity {
 
     @Override
@@ -55,11 +49,11 @@ public class MainActivity extends AppCompatActivity {
                 dataBean.integers.add(6);*/
 
 //                byte[] data = JByteUtil.objectToByte(dataBean);
-                byte[] data = JByteArrays.getBytes(dataBean);
+
+                byte[] data = JObjToByte.getBytes(dataBean);
                 Log.d("data", ByteUtil.getStringforLog(data));
                 DemoBean bean =
-                        (DemoBean) JByteUtil
-                                .parserByte(DemoBean.class, data);
+                        (DemoBean) JByteToObj.getObject(DemoBean.class, data);
                 if (bean == null) {
                     Log.d("tag--", "null");
                 } else {
@@ -78,8 +72,23 @@ public class MainActivity extends AppCompatActivity {
                 dataBean.integers.add(4);
                 dataBean.integers.add(5);
                 dataBean.integers.add(6);
-                byte[] data = JByteArrays.getBytes(dataBean);
+
+                dataBean.a[0] = 1;
+                dataBean.a[1] = 2;
+                dataBean.a[2] = 3;
+                dataBean.a[3] = 4;
+                dataBean.a[4] = 5;
+                dataBean.a[5] = 6;
+                byte[] data = JObjToByte.getBytes(dataBean);
                 Log.d("data", ByteUtil.getStringforLog(data));
+
+                DemoListBean bean =
+                        (DemoListBean) JByteToObj.getObject(DemoListBean.class, data);
+                if (bean == null) {
+                    Log.d("tag--", "null");
+                } else {
+                    Log.d("tag---", bean.toString());
+                }
             }
         });
     }

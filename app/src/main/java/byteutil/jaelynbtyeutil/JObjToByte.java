@@ -1,7 +1,5 @@
 package byteutil.jaelynbtyeutil;
 
-import android.util.Log;
-
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -14,18 +12,18 @@ import java.util.List;
  * Created by zaric on 17-04-11.
  */
 
-public class JByteArrays {
+public class JObjToByte {
 
     public static byte[] getBytes(Object object) {
         byte[] datas = variableToBytes(object);
         if (datas != null) {
             return datas;
         } else {
-            return classToBytes(object);
+            return objToBytes(object);
         }
     }
 
-    public static byte[] variableToBytes(Object obj) {
+    private static byte[] variableToBytes(Object obj) {
         /*if (!obj.getClass().isPrimitive() & !Number.class.isAssignableFrom(obj.getClass()) &
                 obj.getClass() != String.class) {
             return null;
@@ -56,15 +54,29 @@ public class JByteArrays {
         return null;
     }
 
-    public static byte[] classToBytes(Object obj) {
+    private static byte[] objToBytes(Object obj) {
+        if (obj == null){
+            return null;
+        }
         if (List.class.isAssignableFrom(obj.getClass())) {  //解析链表
-             
-
-        } else if (Arrays.class.isAssignableFrom(obj.getClass())) { // 解析数组
+            List<Object> objs = (List<Object>) obj;
+            List<Byte> listData = new ArrayList<>();
+            for (int i = 0; i < objs.size(); i++) {
+                byte[] childByte = getBytes(objs.get(i));
+                for (byte child : childByte){
+                    listData.add(child);
+                }
+            }
+            byte[] datas = new byte[listData.size()];
+            for (int i = 0; i < datas.length; i++) {
+                datas[i] = listData.get(i);
+            }
+            return datas;
+        } else if (obj.getClass().isArray()) { // 解析数组
             int lenght = Array.getLength(obj);
             List<Byte> listData = new ArrayList<>();
             for (int i = 0; i < lenght; i++) {
-                Object childObj = Array.get(obj, 1);
+                Object childObj = Array.get(obj, i);
                 byte[] childByte = getBytes(childObj);
                 for (byte child : childByte){
                     listData.add(child);
@@ -126,7 +138,6 @@ public class JByteArrays {
                 }
             }
         }
-
         Collections.sort(arrayFields, new Comparator<Field>() {
             @Override
             public int compare(Field field1, Field field2) {
