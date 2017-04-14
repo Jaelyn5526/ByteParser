@@ -1,4 +1,4 @@
-package byteutil.jaelynbtyeutil;
+package byteutil.jaelyn.util;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
@@ -8,11 +8,16 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import byteutil.jaelyn.util.ByteUtil;
+import byteutil.jaelyn.util.JByte;
+
 /**
  * Created by zaric on 17-04-11.
  */
 
 public class JObjToByte {
+
+    public static int num = 0;
 
     public static byte[] getBytes(Object object) {
         byte[] datas = variableToBytes(object);
@@ -32,23 +37,32 @@ public class JObjToByte {
             return null;
         }
         if (obj.getClass() == byte.class | obj.getClass() == Byte.class) {
+            num = 1;
             return new byte[]{(byte) obj};
         } else if (obj.getClass() == char.class | obj.getClass() == Character.class) {
+            num = 2;
             return ByteUtil.getBytes((char) obj);
         } else if (obj.getClass() == short.class | obj.getClass() == Short.class) {
+            num = 2;
             return ByteUtil.getBytes((short) obj);
         } else if (obj.getClass() == int.class | obj.getClass() == Integer.class) {
+            num = 4;
             return ByteUtil.getBytes((int) obj);
         } else if (obj.getClass() == long.class | obj.getClass() == Long.class) {
+            num = 8;
             return ByteUtil.getBytes((long) obj);
         } else if (obj.getClass() == float.class | obj.getClass() == Float.class) {
+            num = 4;
             return ByteUtil.getBytes((float) obj);
         } else if (obj.getClass() == double.class | obj.getClass() == Double.class) {
+            num = 8;
             return ByteUtil.getBytes((double) obj);
         } else if (obj.getClass() == boolean.class || obj.getClass() == Boolean.class) {
+            num = 1;
             byte data = (boolean) obj ? (byte) 1 : (byte) 0;
             return new byte[]{data};
         } else if (obj.getClass() == String.class) {
+            num = 0;
             return ByteUtil.getBytes((String) obj);
         }
         return null;
@@ -95,9 +109,9 @@ public class JObjToByte {
                     Object childObj = field.get(obj);
                     byte[] childByte = getBytes(childObj);
                     int lenght = field.getAnnotation(JByte.class).lenght();
-                    if (lenght != 0){
+                    if (lenght != 0 && num != 0){
                         int childlgt = childByte.length;
-                        for (int i = 0; i < lenght; i++) {
+                        for (int i = 0; i < lenght * num; i++) {
                             if (i < childlgt) {
                                 listData.add(childByte[i]);
                             } else {

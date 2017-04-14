@@ -1,9 +1,12 @@
-package byteutil.jaelynbtyeutil;
+package byteutil.jaelyn;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+
+import byteutil.jaelyn.util.ByteUtil;
+import byteutil.jaelyn.util.JByteUtil;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -41,19 +44,11 @@ public class MainActivity extends AppCompatActivity {
                 dataBean.bLong = 6l;
                 dataBean.bFloat = 5.5f;
                 dataBean.bDouble = 4d;
-                /*dataBean.integers.add(1);
-                dataBean.integers.add(2);
-                dataBean.integers.add(3);
-                dataBean.integers.add(4);
-                dataBean.integers.add(5);
-                dataBean.integers.add(6);*/
 
-//                byte[] data = JByteUtil.objectToByte(dataBean);
-
-                byte[] data = JObjToByte.getBytes(dataBean);
+                byte[] data = JByteUtil.getBytes(dataBean);
                 Log.d("data", ByteUtil.getStringforLog(data));
                 DemoBean bean =
-                        (DemoBean) JByteToObj.getObject(DemoBean.class, data);
+                        (DemoBean) JByteUtil.getObject(DemoBean.class, data);
                 if (bean == null) {
                     Log.d("tag--", "null");
                 } else {
@@ -61,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
 
         findViewById(R.id.btn).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -79,11 +75,11 @@ public class MainActivity extends AppCompatActivity {
                 dataBean.a[3] = 4;
                 dataBean.a[4] = 5;
                 dataBean.a[5] = 6;
-                byte[] data = JObjToByte.getBytes(dataBean);
+                byte[] data = JByteUtil.getBytes(dataBean);
                 Log.d("data", ByteUtil.getStringforLog(data));
 
                 DemoListBean bean =
-                        (DemoListBean) JByteToObj.getObject(DemoListBean.class, data);
+                        (DemoListBean) JByteUtil.getObject(DemoListBean.class, data);
                 if (bean == null) {
                     Log.d("tag--", "null");
                 } else {

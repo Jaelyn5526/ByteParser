@@ -1,4 +1,4 @@
-package byteutil.jaelynbtyeutil;
+package byteutil.jaelyn;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

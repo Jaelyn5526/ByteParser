@@ -1,4 +1,4 @@
-package byteutil.jaelynbtyeutil;
+package byteutil.jaelyn.util;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

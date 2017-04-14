@@ -1,6 +1,6 @@
-package byteutil.jaelynbtyeutil;
+package byteutil.jaelyn;
 
-import java.util.ArrayList;
+import byteutil.jaelyn.util.JByte;
 
 /**
  * Created by zaric on 17-04-07.

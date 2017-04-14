@@ -1,10 +1,7 @@
-package byteutil.jaelynbtyeutil;
+package byteutil.jaelyn.util;
 
-import android.app.ActivityManager;
-import android.util.Log;
-
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -13,11 +10,14 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import byteutil.jaelyn.util.ByteUtil;
+import byteutil.jaelyn.util.JByte;
+
 /**
  * Created by zaric on 17-04-12.
  */
 
-public class JByteToObj{
+public class JByteToObj {
     private static int index = 0;
 
     public static Object getObject(Class<?> cls, byte... bytes) {
@@ -27,7 +27,6 @@ public class JByteToObj{
         index = 0;
         return parserObject(cls, bytes.length, bytes);
     }
-
 
     private static Object parserObject(Class<?> cls, int length, byte... bytes) {
         if (isBaseVariable(cls)) {
@@ -124,39 +123,43 @@ public class JByteToObj{
         try {
             Object obj = Class.forName(cls.getName()).newInstance();
             if (List.class.isAssignableFrom(cls)) {
-                ArrayList<Object> objList = (ArrayList<Object>) obj;
-                Class childCls = null;
-                Method method = cls.getMethod("get", int.class);
-                childCls = method.getReturnType();
-                /*Type type = objList.getClass().getField("list").getGenericType();
-                ParameterizedType pt = (ParameterizedType) type;
-                Class childCls = (Class) pt.getActualTypeArguments()[0];*/
-                Log.d("aaa", childCls+"");
-                int starIndex = index;
-                while ((index - starIndex) < lenght){
-                    Object childObj = parserObject(childCls, lenght, bytes);
-                    objList.add(childObj);
-                }
-                return objList;
+                return null;
             } else if (cls.isArray()) {
-
+                return null;
             } else {
                 List<Field> fields = extractFields(cls);
                 for (Field field : fields) {
                     Class<?> childCls = field.getType();
-                    /*if (List.class.isAssignableFrom(cls)){
+                    if (List.class.isAssignableFrom(childCls)) {
                         Type type = field.getGenericType();
                         ParameterizedType pt = (ParameterizedType) type;
-                        Class childCls1= (Class) pt.getActualTypeArguments()[0];
-                        Log.d("aaa", childCls1+"");
-                    }else {
+                        Type[] arrayChildType = pt.getActualTypeArguments();
+                        List<Object> datas = new ArrayList<>();
+                        int datasSize = field.getAnnotation(JByte.class).lenght();
+                        for (int i = 0; i < datasSize; i++) {
+                            Object childObj =
+                                    parserObject((Class) arrayChildType[0],
+                                            field.getAnnotation(JByte.class).lenght(), bytes);
+                            datas.add(childObj);
+                        }
+                        field.set(obj, datas);
+                    } else if (childCls.isArray()) {
+                        int datasSize = field.getAnnotation(JByte.class).lenght();
+                        Object datas =
+                                Array.newInstance(childCls.getComponentType(), datasSize);
+                        for (int i = 0; i < datasSize; i++) {
+                            Object childObj =
+                                    parserObject(childCls.getComponentType(),
+                                            field.getAnnotation(JByte.class).lenght(), bytes);
+                            Array.set(datas, i, childObj);
+                        }
+                        field.set(obj, datas);
+                    } else {
                         Object childObj =
-                                parserObject(childCls, field.getAnnotation(JByte.class).lenght(), bytes);
+                                parserObject(childCls, field.getAnnotation(JByte.class).lenght(),
+                                        bytes);
                         field.set(obj, childObj);
-                    }*/
-                    Object childObj =
-                            parserObject(childCls, field.getAnnotation(JByte.class).lenght(), bytes);
-                    field.set(obj, childObj);
+                    }
                 }
                 return obj;
             }
@@ -165,8 +168,6 @@ public class JByteToObj{
         } catch (InstantiationException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
         return null;
@@ -211,6 +212,4 @@ public class JByteToObj{
         }
         return false;
     }
-
-
 }

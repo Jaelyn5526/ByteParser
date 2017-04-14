@@ -1,4 +1,4 @@
-package byteutil.jaelynbtyeutil;
+package byteutil.jaelyn;
 
 import org.junit.Test;
 
