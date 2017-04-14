@@ -10,8 +10,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import byteutil.jaelyn.util.ByteUtil;
-import byteutil.jaelyn.util.JByte;
 
 /**
  * Created by zaric on 17-04-12.
@@ -28,6 +26,15 @@ public class JByteToObj {
         return parserObject(cls, bytes.length, bytes);
     }
 
+    /**
+     * 分类解析数据
+     * 数据类型一：基础数据类型，Number，String等可以直接转成byte[]
+     * 数据类型二：Class list array
+     * @param cls
+     * @param length
+     * @param bytes
+     * @return
+     */
     private static Object parserObject(Class<?> cls, int length, byte... bytes) {
         if (isBaseVariable(cls)) {
             return parserVariable(cls, length, bytes);
@@ -36,6 +43,13 @@ public class JByteToObj {
         }
     }
 
+    /**
+     * 将 数据类型一 数据转成byte[]
+     * @param cls
+     * @param lenght array list String 的长度
+     * @param bytes
+     * @return
+     */
     private static Object parserVariable(Class<?> cls, int lenght, byte... bytes) {
 
         if (cls == byte.class | cls == Byte.class) {
@@ -119,6 +133,13 @@ public class JByteToObj {
         return null;
     }
 
+    /**
+     * 将数据类型二数据 提取解析成 数据类型二，再调用parserVariable，解析获取到byte[]
+     * @param cls
+     * @param lenght
+     * @param bytes
+     * @return
+     */
     private static Object parserChildObject(Class<?> cls, int lenght, byte... bytes) {
         try {
             Object obj = Class.forName(cls.getName()).newInstance();
@@ -174,7 +195,10 @@ public class JByteToObj {
     }
 
     /**
-     * 提取需要解析的成员变量
+     * 提取需要解析的有注解成员变量
+     * 按照注解排序
+     * @param cls
+     * @return
      */
     private static List<Field> extractFields(Class<?> cls) {
         Field[] fields = cls.getDeclaredFields();
@@ -205,6 +229,11 @@ public class JByteToObj {
         return arrayFields;
     }
 
+    /**
+     * 判断数据类型：数据类型一， 数据类型二
+     * @param cls
+     * @return
+     */
     public static boolean isBaseVariable(Class<?> cls) {
         if (cls.isPrimitive() | Number.class.isAssignableFrom(cls) | cls == Character.class |
                 cls == String.class | cls == Boolean.class) {

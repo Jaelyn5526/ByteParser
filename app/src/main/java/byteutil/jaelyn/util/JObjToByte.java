@@ -138,7 +138,10 @@ public class JObjToByte {
     }
 
     /**
-     * 提取需要解析的成员变量
+     * 提取需要解析的有注解成员变量
+     * 按照注解排序
+     * @param cls
+     * @return
      */
     private static List<Field> extractFields(Class<?> cls) {
         Field[] fields = cls.getDeclaredFields();

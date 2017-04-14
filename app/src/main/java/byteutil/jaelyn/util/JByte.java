@@ -11,7 +11,16 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.TYPE})
 public @interface JByte {
-    //成员变量的顺序 递增
+    /**
+     * @return
+     * 成员变量的顺序 递增
+     */
     int index() default 0;
+
+    /**
+     * @return
+     * list/array 的总长度
+     * String 的字节数
+     */
     int lenght() default 0;
 }
