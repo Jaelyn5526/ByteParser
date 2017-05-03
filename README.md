@@ -72,3 +72,4 @@ public class MainActivity extends AppCompatActivity {
         DemoBean bean = (DemoBean) JByteUtil.getObject(DemoBean.class, data);
 }
 ```
+
