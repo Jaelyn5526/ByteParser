@@ -13,7 +13,7 @@
 4.JByteToObj: 将Byte数组转成Object;
 5.JObjToByte: 将Object 转成 byte数组;
 
-使用过程中 只用调用3 JByteUtil;
+使用过程中 只用调用 JByteUtil;
 
 ### 使用示例 ###
 
